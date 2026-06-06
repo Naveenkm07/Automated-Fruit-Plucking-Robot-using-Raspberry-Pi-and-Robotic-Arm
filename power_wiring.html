@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Step 1: Power System Wiring</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #0f111a; color: #fff; padding: 40px; line-height: 1.6; }
+        h1 { color: #00d2d3; text-align: center; font-size: 36px; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #8395a7; font-size: 18px; margin-bottom: 40px; }
+
+        .intro { background: #1e2233; padding: 25px; border-radius: 10px; margin-bottom: 40px; border-left: 5px solid #00d2d3; font-size: 18px; }
+
+        .diagram-container {
+            background: #1e2233;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 40px;
+            position: relative;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .box {
+            display: inline-block;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 18px;
+            margin: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .battery { background: #ff4757; color: white; border: 3px solid #ff6b81; padding: 20px 40px; font-size: 24px; }
+        .motor-driver { background: #ff9f43; color: black; border: 3px solid #feca57; }
+        .buck { background: #2ed573; color: black; border: 3px solid #7bed9f; }
+        .pi { background: #e84118; color: white; border: 3px solid #c23616; }
+        .servos { background: #3742fa; color: white; border: 3px solid #5352ed; }
+
+        .line { font-family: monospace; font-size: 18px; color: #c8d6e5; line-height: 1.2; white-space: pre; }
+        .wire-red { color: #ff4757; font-weight: bold; }
+        .wire-black { color: #7f8fa6; font-weight: bold; }
+        .wire-blue { color: #3498db; font-weight: bold; }
+
+        .step-card {
+            background: #222f3e;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #576574;
+        }
+        .step-card h2 { color: #1dd1a1; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .step-number { background: #1dd1a1; color: #000; width: 35px; height: 35px; display: inline-flex; justify-content: center; align-items: center; border-radius: 50%; font-size: 20px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #576574; }
+        th { background: #10141e; color: #c8d6e5; }
+        
+        .warning { background: #c0392b; padding: 20px; border-radius: 8px; margin-top: 15px; font-weight: bold; }
+        .success { background: #10ac84; padding: 20px; border-radius: 8px; margin-top: 15px; font-weight: bold; text-align: center; font-size: 20px; }
+    </style>
+</head>
+<body>
+
+    <h1>🔋 Step 1: The Power System Wiring</h1>
+    <p class="subtitle">Learn how to power the Brains, the Motors, and the Arm without frying anything.</p>
+
+    <div class="intro">
+        <strong>The Golden Rule of Robotics Wiring:</strong><br>
+        Motors and Servos draw HUGE amounts of electricity. If you connect motors directly to your Raspberry Pi, the Pi will crash, restart, or burn out. We solve this by taking power from the 12V Battery, and splitting it into different paths using <strong>Buck Converters</strong> (which step 12V down to a safe 5V).
+    </div>
+
+    <div class="diagram-container">
+        <h2 style="color: #fff; margin-bottom: 20px;">Wiring Flowchart</h2>
+        
+        <div class="box battery">12V Battery</div>
+        
+        <div class="line">
+      │
+      ├──────────────── <span class="wire-red">12V (+)</span> & <span class="wire-black">GND (-)</span> ─────────────┐
+      │                                                │
+      ▼                                                ▼</div>
+
+        <div>
+            <div class="box motor-driver">SmartElex Motor Driver<br><span style="font-size:14px; font-weight:normal;">(For the wheels - needs 12V)</span></div>
+            <span style="display:inline-block; width: 50px;"></span>
+            <div class="box buck">Buck Converter<br><span style="font-size:14px; font-weight:normal;">(Steps 12V down to 5V)</span></div>
+        </div>
+
+        <div class="line">                                                       │
+                                                       ├──────────────── <span class="wire-blue">5V (+)</span> & <span class="wire-black">GND (-)</span> ──────────┐
+                                                       │                                            │
+                                                       ▼                                            ▼</div>
+        <div>
+            <div class="box pi">Raspberry Pi & Arduino<br><span style="font-size:14px; font-weight:normal;">(The Brains - strictly 5V)</span></div>
+            <span style="display:inline-block; width: 50px;"></span>
+            <div class="box servos">Robotic Arm Servos<br><span style="font-size:14px; font-weight:normal;">(The Muscles - strictly 5V)</span></div>
+        </div>
+
+        <div class="line" style="margin-top:20px; color:#ff9f43;">* ALL GROUND (GND) WIRES IN THE ENTIRE ROBOT MUST BE CONNECTED TOGETHER! *</div>
+    </div>
+
+
+    <div class="step-card">
+        <h2><span class="step-number">1</span> Connect the Wheels (12V)</h2>
+        <p>The SmartElex 15S motor driver controls your heavy rover wheels, so it needs the full 12 Volts straight from the battery.</p>
+        <table>
+            <tr><th>From: 12V Battery</th><th>To: SmartElex 15S Motor Driver</th></tr>
+            <tr><td><span class="wire-red">Positive Wire (+)</span></td><td>Connect to <strong>VIN (+)</strong> or <strong>12V</strong> terminal block</td></tr>
+            <tr><td><span class="wire-black">Negative Wire (-)</span></td><td>Connect to <strong>GND (-)</strong> terminal block</td></tr>
+        </table>
+    </div>
+
+    <div class="step-card">
+        <h2><span class="step-number">2</span> Set up the Buck Converter (12V to 5V)</h2>
+        <p>The Raspberry Pi and Arduino will die instantly if you feed them 12V. You must route power through the Buck Converter.</p>
+        
+        <div class="warning">
+            ⚠️ CRITICAL STEP: Before you plug the Buck Converter into the Raspberry Pi, you MUST use a screwdriver to turn the tiny screw on the Buck Converter until its output reads exactly 5.0V or 5.1V on a Multimeter!
+        </div>
+
+        <table>
+            <tr><th>From: 12V Battery</th><th>To: Buck Converter (INPUT Side)</th></tr>
+            <tr><td><span class="wire-red">Positive Wire (+)</span></td><td>Connect to <strong>IN+</strong></td></tr>
+            <tr><td><span class="wire-black">Negative Wire (-)</span></td><td>Connect to <strong>IN-</strong></td></tr>
+        </table>
+    </div>
+
+    <div class="step-card">
+        <h2><span class="step-number">3</span> Power the Brains (5V)</h2>
+        <p>Now that the Buck Converter is outputting a safe 5 Volts, we can power the Raspberry Pi and the Arduino.</p>
+        <table>
+            <tr><th>From: Buck Converter (OUTPUT Side)</th><th>To: Raspberry Pi 4</th></tr>
+            <tr><td><span class="wire-blue">Positive 5V Wire (+) (OUT+)</span></td><td>Connect to <strong>Physical Pin 2</strong> or <strong>Pin 4</strong> (5V Power)</td></tr>
+            <tr><td><span class="wire-black">Negative Wire (-) (OUT-)</span></td><td>Connect to <strong>Physical Pin 6</strong> (Ground)</td></tr>
+        </table>
+        <p style="margin-top:10px; font-style:italic;">Note: You can power the Arduino Uno by just plugging a USB cable from the Raspberry Pi into the Arduino! The Pi will share its 5V power and talk to the Arduino at the same time.</p>
+    </div>
+
+    <div class="step-card">
+        <h2><span class="step-number">4</span> Power the Robotic Arm (5V)</h2>
+        <p>The MG996R servos on the robotic arm draw a massive amount of current when lifting heavy tomatoes. If you power the servos directly from the Arduino or Raspberry Pi pins, the Pi will shut down (brownout) every time the arm moves.</p>
+        <table>
+            <tr><th>From: Buck Converter (OUTPUT Side)</th><th>To: Servo Motors (Red & Brown wires)</th></tr>
+            <tr><td><span class="wire-blue">Positive 5V Wire (+) (OUT+)</span></td><td>Connect to the <strong>RED wire (VCC)</strong> of all Servos</td></tr>
+            <tr><td><span class="wire-black">Negative Wire (-) (OUT-)</span></td><td>Connect to the <strong>BROWN wire (GND)</strong> of all Servos</td></tr>
+        </table>
+        <p style="margin-top:10px;">The YELLOW/ORANGE wire on the servos is the Signal wire. That is the ONLY wire that goes to the Arduino!</p>
+    </div>
+
+    <div class="success">
+        ✅ Once this is done, the Power Foundation of your robot is complete!
+    </div>
+
+</body>
+</html>

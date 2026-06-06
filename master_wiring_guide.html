@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Wiring Guide - Fruit Robot</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap');
+        
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --border-color: #30363d;
+            --text-main: #c9d1d9;
+            --accent-blue: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-red: #ff7b72;
+            --accent-orange: #d29922;
+            --accent-purple: #bc8cff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            color: #fff;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #8b949e;
+            margin-bottom: 50px;
+        }
+
+        .rule-box {
+            background: rgba(255, 123, 114, 0.1);
+            border: 1px solid var(--accent-red);
+            border-left: 5px solid var(--accent-red);
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 40px;
+        }
+        .rule-box h2 { color: var(--accent-red); margin-bottom: 15px; }
+        .rule-box ul { margin-left: 20px; font-size: 1.1rem; }
+        .rule-box li { margin-bottom: 10px; }
+
+        .section-title {
+            font-size: 2rem;
+            color: #fff;
+            margin: 60px 0 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .section-title span {
+            background: var(--accent-blue);
+            color: #000;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.5rem; font-weight: bold;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 1.1rem;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        th {
+            background: rgba(255,255,255,0.05);
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .pin-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #000;
+        }
+        .bg-red { background: var(--accent-red); }
+        .bg-black { background: #8b949e; color: #fff !important; }
+        .bg-blue { background: var(--accent-blue); }
+        .bg-green { background: var(--accent-green); }
+        .bg-orange { background: var(--accent-orange); }
+        .bg-purple { background: var(--accent-purple); }
+
+        .diagram {
+            background: #000;
+            border-radius: 8px;
+            padding: 30px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: #fff;
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+        }
+
+        .circuit-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            padding: 40px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-top: 20px;
+        }
+
+        .highlight { color: var(--accent-orange); font-weight: bold; }
+        
+        /* Pi Header Styling */
+        .pi-header {
+            display: grid;
+            grid-template-columns: 1fr 40px 40px 1fr;
+            gap: 5px;
+            background: #000;
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-family: 'JetBrains Mono', monospace;
+            align-items: center;
+            text-align: center;
+        }
+        .pi-pin {
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            background: #30363d;
+            border: 2px solid #8b949e;
+            margin: auto;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 0.8rem;
+            color: #fff;
+        }
+        .pi-pin.power5v { background: var(--accent-red); border-color: #ff0000; }
+        .pi-pin.power3v { background: var(--accent-orange); border-color: #ff9900; }
+        .pi-pin.gnd { background: #000; border-color: #fff; color: #fff; }
+        .pi-pin.gpio { background: var(--accent-green); border-color: #00ff00; color: #000; }
+        .pin-label-left { text-align: right; padding-right: 15px; color: #8b949e; }
+        .pin-label-right { text-align: left; padding-left: 15px; color: #8b949e; }
+        .used { font-weight: bold; color: #fff; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🤖 Ultimate Master Wiring Guide</h1>
+    <p class="subtitle">Complete Step-by-Step Hardware Instructions for the Fruit Plucking Robot</p>
+
+    <div class="rule-box">
+        <h2>⚠️ The 3 Unbreakable Rules of Robotics</h2>
+        <ul>
+            <li><strong>The Ground Rule:</strong> Every single component (Pi, Arduino, Sensors, Motor Driver) MUST have their Ground (GND) wires connected together. If they do not share a ground, signals will fail and the robot will twitch.</li>
+            <li><strong>The Voltage Rule:</strong> The Raspberry Pi GPIO pins can ONLY handle 3.3 Volts. If you feed 5 Volts into a GPIO pin (like from an Ultrasonic sensor), the Pi will instantly die. Use resistors!</li>
+            <li><strong>The Motor Power Rule:</strong> NEVER power motors or servos from the Raspberry Pi or Arduino pins. They draw too much current. Use your 12V Battery and 5V Buck Converters.</li>
+        </ul>
+    </div>
+
+    <!-- RASPBERRY PI REFERENCE -->
+    <h2 class="section-title"><span>0</span> Knowing Your Raspberry Pi</h2>
+    <div class="card">
+        <p>Hold your Raspberry Pi so the 40 metal pins are at the TOP edge, and the silver USB ports are on the RIGHT side. Here is exactly what those pins are used for in your robot:</p>
+        
+        <div class="pi-header" style="margin-top:20px;">
+            <div class="pin-label-left">3.3V Power</div><div class="pi-pin power3v">1</div><div class="pi-pin power5v">2</div><div class="pin-label-right used">5V Power IN (From Buck)</div>
+            <div class="pin-label-left">SDA</div><div class="pi-pin gpio">3</div><div class="pi-pin power5v">4</div><div class="pin-label-right">5V Power</div>
+            <div class="pin-label-left">SCL</div><div class="pi-pin gpio">5</div><div class="pi-pin gnd">6</div><div class="pin-label-right used">GND (Main Ground)</div>
+            <div class="pin-label-left used">GPIO 4 (Back IR)</div><div class="pi-pin gpio">7</div><div class="pi-pin gpio">8</div><div class="pin-label-right">TXD</div>
+            <div class="pin-label-left">GND</div><div class="pi-pin gnd">9</div><div class="pi-pin gpio">10</div><div class="pin-label-right">RXD</div>
+            <div class="pin-label-left used">GPIO 17 (Front-Left IR)</div><div class="pi-pin gpio">11</div><div class="pi-pin gpio">12</div><div class="pin-label-right">GPIO 18</div>
+            <div class="pin-label-left used">GPIO 27 (Front-Right IR)</div><div class="pi-pin gpio">13</div><div class="pi-pin gnd">14</div><div class="pin-label-right">GND</div>
+            <div class="pin-label-left used">GPIO 22 (Front US Trig)</div><div class="pi-pin gpio">15</div><div class="pi-pin gpio">16</div><div class="pin-label-right used">GPIO 23 (Front US Echo)</div>
+            <div class="pin-label-left">3.3V Power</div><div class="pi-pin power3v">17</div><div class="pi-pin gpio">18</div><div class="pin-label-right used">GPIO 24 (Left US Trig)</div>
+            <div class="pin-label-left">MOSI</div><div class="pi-pin gpio">19</div><div class="pi-pin gnd">20</div><div class="pin-label-right">GND</div>
+            <div class="pin-label-left">MISO</div><div class="pi-pin gpio">21</div><div class="pi-pin gpio">22</div><div class="pin-label-right used">GPIO 25 (Left US Echo)</div>
+            <div class="pin-label-left">SCLK</div><div class="pi-pin gpio">23</div><div class="pi-pin gpio">24</div><div class="pin-label-right">CE0</div>
+            <div class="pin-label-left">GND</div><div class="pi-pin gnd">25</div><div class="pi-pin gpio">26</div><div class="pin-label-right">CE1</div>
+            <div class="pin-label-left">ID_SD</div><div class="pi-pin gpio">27</div><div class="pi-pin gpio">28</div><div class="pin-label-right">ID_SC</div>
+            <div class="pin-label-left used">GPIO 5 (Left Motor DIR)</div><div class="pi-pin gpio">29</div><div class="pi-pin gnd">30</div><div class="pin-label-right">GND</div>
+            <div class="pin-label-left used">GPIO 6 (Right Motor DIR)</div><div class="pi-pin gpio">31</div><div class="pi-pin gpio">32</div><div class="pin-label-right used">GPIO 12 (Left Motor PWM)</div>
+            <div class="pin-label-left used">GPIO 13 (Right Motor PWM)</div><div class="pi-pin gpio">33</div><div class="pi-pin gnd">34</div><div class="pin-label-right">GND</div>
+            <div class="pin-label-left">GPIO 19</div><div class="pi-pin gpio">35</div><div class="pi-pin gpio">36</div><div class="pin-label-right used">GPIO 16 (Right US Trig)</div>
+            <div class="pin-label-left used">GPIO 26 (Right US Echo)</div><div class="pi-pin gpio">37</div><div class="pi-pin gpio">38</div><div class="pin-label-right used">GPIO 20 (LED Relay)</div>
+            <div class="pin-label-left used">GND (SmartElex Ground)</div><div class="pi-pin gnd">39</div><div class="pi-pin gpio">40</div><div class="pin-label-right used">GPIO 21 (Pump Relay)</div>
+        </div>
+    </div>
+
+    <!-- MODULE 1: POWER -->
+    <h2 class="section-title"><span>1</span> The Power Foundation</h2>
+    <div class="card">
+        <p>Before plugging in data wires, we must establish safe power lines from the battery.</p>
+        <table>
+            <tr><th>Component</th><th>Positive (+)</th><th>Negative (-)</th><th>Notes</th></tr>
+            <tr>
+                <td><strong>1. SmartElex Motor Driver</strong></td>
+                <td><span class="pin-badge bg-red">12V Battery directly</span></td>
+                <td><span class="pin-badge bg-black">Battery GND</span></td>
+                <td>Motors need pure 12V.</td>
+            </tr>
+            <tr>
+                <td><strong>2. Buck Converter (INPUT)</strong></td>
+                <td><span class="pin-badge bg-red">12V Battery directly</span></td>
+                <td><span class="pin-badge bg-black">Battery GND</span></td>
+                <td><span class="highlight">TUNE TO 5.0V WITH SCREWDRIVER BEFORE NEXT STEP!</span></td>
+            </tr>
+            <tr>
+                <td><strong>3. Raspberry Pi 4</strong></td>
+                <td><span class="pin-badge bg-red">Buck 5V OUT → Pi Pin 2</span></td>
+                <td><span class="pin-badge bg-black">Buck GND OUT → Pi Pin 6</span></td>
+                <td>The Pi is now safely powered.</td>
+            </tr>
+            <tr>
+                <td><strong>4. PCA9685 Servo Driver</strong></td>
+                <td><span class="pin-badge bg-red">Buck 5V OUT → V+ Terminal</span></td>
+                <td><span class="pin-badge bg-black">Buck GND OUT → GND Terminal</span></td>
+                <td>This powers the arm's heavy servos safely.</td>
+            </tr>
+            <tr>
+                <td><strong>5. Arduino Uno</strong></td>
+                <td><span class="pin-badge bg-blue">USB Cable from Raspberry Pi</span></td>
+                <td><span class="pin-badge bg-blue">USB Cable</span></td>
+                <td>Pi powers and talks to Arduino via USB!</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- MODULE 2: MOVEMENT -->
+    <h2 class="section-title"><span>2</span> Motor Control (SmartElex 15S)</h2>
+    <div class="card">
+        <p>Connecting the Raspberry Pi to the motor driver to spin the wheels.</p>
+        <table>
+            <tr><th>SmartElex Pin</th><th>Raspberry Pi Connection</th><th>Pi Physical Pin</th></tr>
+            <tr><td><strong>Left PWM</strong></td><td>GPIO 12</td><td><span class="pin-badge bg-purple">Pin 32</span></td></tr>
+            <tr><td><strong>Left DIR</strong></td><td>GPIO 5</td><td><span class="pin-badge bg-purple">Pin 29</span></td></tr>
+            <tr><td><strong>Right PWM</strong></td><td>GPIO 13</td><td><span class="pin-badge bg-purple">Pin 33</span></td></tr>
+            <tr><td><strong>Right DIR</strong></td><td>GPIO 6</td><td><span class="pin-badge bg-purple">Pin 31</span></td></tr>
+            <tr><td><strong>GND</strong></td><td>Ground MUST connect!</td><td><span class="pin-badge bg-black">Pin 39</span></td></tr>
+        </table>
+        <div style="margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+            <strong>Wheel Connection:</strong> Wire the two LEFT motors together into Motor A on the SmartElex. Wire the two RIGHT motors together into Motor B.
+        </div>
+    </div>
+
+    <!-- MODULE 3: THE SENSES -->
+    <h2 class="section-title"><span>3</span> The Eyes & Senses (6 Sensors)</h2>
+    <div class="card">
+        <h3>A. The 3 IR Sensors (Front-Left, Front-Right, Back)</h3>
+        <p style="margin-bottom:15px; color:#8b949e;">These are 3.3V safe. Connect the 'OUT' pin directly to the Pi.</p>
+        <table>
+            <tr><th>Sensor</th><th>VCC & GND</th><th>OUT Pin Connection</th><th>Pi Physical Pin</th></tr>
+            <tr><td><strong>Front-Left IR</strong></td><td>Buck 5V & GND</td><td>GPIO 17</td><td><span class="pin-badge bg-green">Pin 11</span></td></tr>
+            <tr><td><strong>Front-Right IR</strong></td><td>Buck 5V & GND</td><td>GPIO 27</td><td><span class="pin-badge bg-green">Pin 13</span></td></tr>
+            <tr><td><strong>Back IR</strong></td><td>Buck 5V & GND</td><td>GPIO 4</td><td><span class="pin-badge bg-green">Pin 7</span></td></tr>
+        </table>
+
+        <h3 style="margin-top:40px;">B. The 3 Ultrasonic Sensors (Front, Left, Right)</h3>
+        <p style="margin-bottom:15px; color:#ff7b72;"><strong>WARNING:</strong> The ECHO pins output 5V. You MUST build a voltage divider for ALL 3 sensors so they only send 3.3V to the Pi.</p>
+        
+        <div class="diagram">
+        HOW TO BUILD THE VOLTAGE DIVIDER:
+        (Do this 3 times, once for each Ultrasonic sensor)
+
+        Sensor ECHO Pin ─────┬───── [ 1kΩ Resistor ] ──────────► To Pi GPIO Pin
+                           │
+                     [ 2kΩ Resistor ]
+                           │
+                         Ground
+        </div>
+
+        <table>
+            <tr><th>Sensor</th><th>TRIG Pin (Yellow)</th><th>ECHO Pin (Green - AFTER Resistors)</th></tr>
+            <tr><td><strong>Front US</strong></td><td>GPIO 22 → <span class="pin-badge bg-orange">Pin 15</span></td><td>GPIO 23 → <span class="pin-badge bg-blue">Pin 16</span></td></tr>
+            <tr><td><strong>Left US</strong></td><td>GPIO 24 → <span class="pin-badge bg-orange">Pin 18</span></td><td>GPIO 25 → <span class="pin-badge bg-blue">Pin 22</span></td></tr>
+            <tr><td><strong>Right US</strong></td><td>GPIO 16 → <span class="pin-badge bg-orange">Pin 36</span></td><td>GPIO 26 → <span class="pin-badge bg-blue">Pin 37</span></td></tr>
+        </table>
+    </div>
+
+    <!-- MODULE 4: THE ARM -->
+    <h2 class="section-title"><span>4</span> The Robotic Arm (PCA9685 & Servos)</h2>
+    <div class="card">
+        <p>The Arduino Uno controls the 6 servos using the PCA9685 board.</p>
+        
+        <h3>1. Arduino to PCA9685 I2C Connection</h3>
+        <table>
+            <tr><th>PCA9685 Side Pin</th><th>Arduino Uno Pin</th></tr>
+            <tr><td>VCC (Logic Power)</td><td><span class="pin-badge bg-red">5V</span></td></tr>
+            <tr><td>GND (Logic Ground)</td><td><span class="pin-badge bg-black">GND</span></td></tr>
+            <tr><td>SDA (Data)</td><td><span class="pin-badge bg-blue">A4</span> (or dedicated SDA)</td></tr>
+            <tr><td>SCL (Clock)</td><td><span class="pin-badge bg-green">A5</span> (or dedicated SCL)</td></tr>
+        </table>
+
+        <h3 style="margin-top:30px;">2. Plugging in the Servos</h3>
+        <p>Plug the 3-wire servo connectors into the numbered columns on the PCA9685. Brown wire to bottom, Yellow wire to top.</p>
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top:15px;">
+            <div style="background:#21262d; padding:15px; border-radius:8px; text-align:center;"><strong>Channel 0</strong><br>Base Rotation</div>
+            <div style="background:#21262d; padding:15px; border-radius:8px; text-align:center;"><strong>Channel 1</strong><br>Shoulder Lift</div>
+            <div style="background:#21262d; padding:15px; border-radius:8px; text-align:center;"><strong>Channel 2</strong><br>Elbow Extend</div>
+            <div style="background:#21262d; padding:15px; border-radius:8px; text-align:center;"><strong>Channel 3</strong><br>Wrist Rotate</div>
+            <div style="background:#21262d; padding:15px; border-radius:8px; text-align:center;"><strong>Channel 4</strong><br>Gripper Open/Close</div>
+            <div style="background:#21262d; padding:15px; border-radius:8px; text-align:center;"><strong>Channel 5</strong><br>Gripper Tilt</div>
+        </div>
+    </div>
+
+    <!-- MODULE 5: ACCESSORIES -->
+    <h2 class="section-title"><span>5</span> Accessories (Relays)</h2>
+    <div class="card">
+        <p>To control the Water Pump and LED lights, connect their Relay Modules to the Pi.</p>
+        <table>
+            <tr><th>Relay Module</th><th>Connect IN to Pi</th><th>Pi Physical Pin</th></tr>
+            <tr><td><strong>LED Light Relay</strong></td><td>GPIO 20</td><td><span class="pin-badge bg-orange">Pin 38</span></td></tr>
+            <tr><td><strong>Water Pump Relay</strong></td><td>GPIO 21</td><td><span class="pin-badge bg-orange">Pin 40</span></td></tr>
+        </table>
+        <p style="margin-top:10px; color:#8b949e;">Provide 5V and GND to the relay modules from your Buck Converter.</p>
+    </div>
+
+    <div style="text-align: center; margin: 60px 0; padding: 40px; background: rgba(63, 185, 80, 0.1); border: 1px solid var(--accent-green); border-radius: 12px;">
+        <h2 style="color: var(--accent-green); font-size: 2.5rem; margin-bottom: 10px;">🎉 WIRING COMPLETE 🎉</h2>
+        <p style="font-size: 1.2rem;">If you followed this document exactly, your robot is fully assembled, electrically safe, and ready to pick fruit!</p>
+    </div>
+
+</div>
+
+</body>
+</html>

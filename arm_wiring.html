@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Step 5: The Robotic Arm</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #0f111a; color: #fff; padding: 40px; line-height: 1.6; }
+        h1 { color: #00d2d3; text-align: center; font-size: 36px; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #8395a7; font-size: 18px; margin-bottom: 40px; }
+
+        .intro { background: #1e2233; padding: 25px; border-radius: 10px; margin-bottom: 40px; border-left: 5px solid #00d2d3; font-size: 18px; }
+
+        .step-card {
+            background: #222f3e;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #576574;
+        }
+        .step-card h2 { color: #1dd1a1; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .step-number { background: #1dd1a1; color: #000; width: 35px; height: 35px; display: inline-flex; justify-content: center; align-items: center; border-radius: 50%; font-size: 20px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #576574; }
+        th { background: #10141e; color: #c8d6e5; }
+        
+        .pin-badge {
+            display: inline-block;
+            background: #ff4757;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .pin-badge.green { background: #2ecc71; color: #000; }
+        .pin-badge.blue { background: #3498db; }
+        .pin-badge.yellow { background: #f1c40f; color: #000; }
+        .pin-badge.purple { background: #9b59b6; }
+
+        .warning { background: #c0392b; padding: 20px; border-radius: 8px; margin-top: 15px; font-weight: bold; }
+        .success { background: #10ac84; padding: 20px; border-radius: 8px; margin-top: 15px; font-weight: bold; text-align: center; font-size: 24px; }
+        .tip { background: #34495e; padding: 15px; border-radius: 8px; margin-top: 10px; font-style: italic; border-left: 4px solid #f39c12; }
+    </style>
+</head>
+<body>
+
+    <h1>🦾 Step 5: The Robotic Arm</h1>
+    <p class="subtitle">Connecting the 6 Servo Motors using the PCA9685 Servo Driver</p>
+
+    <div class="intro">
+        <strong>How it works:</strong><br><br>
+        Your robot uses 6 different servo motors for the arm. Instead of plugging 6 messy wires into the Arduino, your code uses the <strong>PCA9685 16-Channel Servo Driver Board</strong> (the small blue board with lots of pins). <br><br>
+        The Arduino only needs 2 wires to talk to this board, and the board handles all 6 servos perfectly!
+    </div>
+
+    <div class="step-card">
+        <h2><span class="step-number">1</span> Power the Servo Board (V+ and GND)</h2>
+        <div class="warning">
+            ⚠️ SERVO POWER IS CRITICAL! Do NOT power the servos from the Arduino's 5V pin, or the Arduino will burn out!
+        </div>
+        <p style="margin-top: 10px;">You must use the <strong>5V output from your Buck Converter</strong> and connect it to the large Green Terminal block on the PCA9685 board.</p>
+        
+        <table style="margin-top: 10px;">
+            <tr><th>From: 5V Buck Converter</th><th>To: PCA9685 Green Terminal Block</th></tr>
+            <tr><td><span style="color:#ff4757; font-weight:bold;">Positive 5V Wire (+)</span></td><td>Connect to <strong>V+</strong></td></tr>
+            <tr><td><span style="color:#7f8c8d; font-weight:bold;">Negative Wire (-)</span></td><td>Connect to <strong>GND</strong></td></tr>
+        </table>
+    </div>
+
+    <div class="step-card">
+        <h2><span class="step-number">2</span> Connect the Arduino to the Servo Board</h2>
+        <p>Now we connect the "Brain" to the board using I2C communication (just 4 wires).</p>
+        
+        <table>
+            <tr><th>PCA9685 Side Pins</th><th>Arduino Uno Pins</th></tr>
+            <tr><td><strong>VCC</strong> (Logic Power)</td><td><span class="pin-badge">5V</span></td></tr>
+            <tr><td><strong>GND</strong> (Logic Ground)</td><td><span class="pin-badge gray" style="background:#7f8c8d;">GND</span></td></tr>
+            <tr><td><strong>SDA</strong> (Data)</td><td><span class="pin-badge blue">A4</span> (or SDA pin)</td></tr>
+            <tr><td><strong>SCL</strong> (Clock)</td><td><span class="pin-badge yellow">A5</span> (or SCL pin)</td></tr>
+        </table>
+    </div>
+
+    <div class="step-card">
+        <h2><span class="step-number">3</span> Plug in the 6 Servos</h2>
+        <p>This is the easy part! Simply plug the 3-wire connectors from your servos into the numbered slots on the PCA9685 board. Make sure the <strong>Brown wire faces the bottom (GND)</strong> and the <strong>Yellow/Orange wire faces the top (PWM)</strong>.</p>
+        
+        <table>
+            <tr><th>PCA9685 Slot Number</th><th>Which Servo Goes Here?</th><th>Servo Type</th></tr>
+            <tr><td><span class="pin-badge purple">Channel 0</span></td><td><strong>Base Rotation</strong> (Spins the arm left/right)</td><td>MG996R (Big)</td></tr>
+            <tr><td><span class="pin-badge purple">Channel 1</span></td><td><strong>Shoulder Lift</strong> (Lifts the whole arm)</td><td>MG996R (Big)</td></tr>
+            <tr><td><span class="pin-badge purple">Channel 2</span></td><td><strong>Elbow Extend</strong> (Reaches out)</td><td>MG996R (Big)</td></tr>
+            <tr><td><span class="pin-badge purple">Channel 3</span></td><td><strong>Wrist Rotate</strong> (Twists the hand)</td><td>SG90 (Small)</td></tr>
+            <tr><td><span class="pin-badge purple">Channel 4</span></td><td><strong>Gripper Open/Close</strong> (Plucks the fruit)</td><td>SG90 (Small)</td></tr>
+            <tr><td><span class="pin-badge purple">Channel 5</span></td><td><strong>Gripper Tilt</strong> (Aims the gripper)</td><td>SG90 (Small)</td></tr>
+        </table>
+    </div>
+
+    <div class="success">
+        🎉 CONGRATULATIONS! 🎉<br>
+        <span style="font-size:18px; font-weight:normal;">Your robot is completely wired up and ready for testing!</span>
+    </div>
+
+</body>
+</html>

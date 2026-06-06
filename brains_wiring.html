@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Step 2: Brains & Communication</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #0f111a; color: #fff; padding: 40px; line-height: 1.6; }
+        h1 { color: #00d2d3; text-align: center; font-size: 36px; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #8395a7; font-size: 18px; margin-bottom: 40px; }
+
+        .intro { background: #1e2233; padding: 25px; border-radius: 10px; margin-bottom: 40px; border-left: 5px solid #00d2d3; font-size: 18px; }
+
+        .diagram-container {
+            background: #1e2233;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .box {
+            display: inline-block;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 18px;
+            margin: 20px;
+            position: relative;
+            vertical-align: middle;
+        }
+
+        .pi { background: #e84118; color: white; border: 3px solid #c23616; padding: 30px; font-size: 24px;}
+        .arduino { background: #0097e6; color: white; border: 3px solid #00a8ff; }
+        .camera { background: #8c7ae6; color: white; border: 3px solid #9c88ff; }
+
+        .connection-line {
+            display: inline-block;
+            vertical-align: middle;
+            font-family: monospace;
+            font-size: 16px;
+            color: #c8d6e5;
+            text-align: center;
+        }
+
+        .step-card {
+            background: #222f3e;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #576574;
+        }
+        .step-card h2 { color: #1dd1a1; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .step-number { background: #1dd1a1; color: #000; width: 35px; height: 35px; display: inline-flex; justify-content: center; align-items: center; border-radius: 50%; font-size: 20px; }
+        
+        .success { background: #10ac84; padding: 20px; border-radius: 8px; margin-top: 15px; font-weight: bold; text-align: center; font-size: 20px; }
+        .tip { background: #34495e; padding: 15px; border-radius: 8px; margin-top: 10px; font-style: italic; border-left: 4px solid #f39c12; }
+    </style>
+</head>
+<body>
+
+    <h1>🧠 Step 2: The Brains & Communication</h1>
+    <p class="subtitle">Connecting the Master (Raspberry Pi) to the Slave (Arduino) and the Eyes (Camera)</p>
+
+    <div class="intro">
+        <strong>Why do we have two computers?</strong><br><br>
+        Your robot uses a "Master-Slave" architecture. <br>
+        • <strong>Raspberry Pi 4 (Master)</strong>: It is super fast and does the heavy thinking. It looks at the camera, processes Artificial Intelligence (OpenCV) to find the fruit, and decides where the robot needs to go.<br>
+        • <strong>Arduino Uno (Slave)</strong>: It is not very smart, but it is PERFECT at controlling servo motors smoothly. <br><br>
+        When the Raspberry Pi finds a fruit, it simply sends a text message to the Arduino over a USB cable saying: <em>"Hey, move the arm to X, Y, Z!"</em> and the Arduino does the heavy lifting.
+    </div>
+
+    <div class="diagram-container">
+        
+        <div class="box camera">Webcam / Pi Camera</div>
+        
+        <div class="connection-line">
+            ◄──── USB or Ribbon Cable ────►<br>
+            (Sends Video Feed)
+        </div>
+        
+        <div class="box pi">Raspberry Pi 4<br><span style="font-size:14px; font-weight:normal;">(Master AI)</span></div>
+
+        <div class="connection-line">
+            ◄──── Blue USB Printer Cable ────►<br>
+            (Serial Comm & Power)
+        </div>
+
+        <div class="box arduino">Arduino Uno<br><span style="font-size:14px; font-weight:normal;">(Arm Controller)</span></div>
+
+    </div>
+
+    <div class="step-card">
+        <h2><span class="step-number">1</span> Connect the Camera</h2>
+        <p>The Raspberry Pi needs to see the fruit.</p>
+        <ul style="margin-left: 20px; margin-top: 10px; line-height: 1.8;">
+            <li>If you are using a <strong>USB Webcam</strong>: Simply plug it into any of the blue USB 3.0 ports on the Raspberry Pi.</li>
+            <li>If you are using a <strong>Raspberry Pi Camera Module</strong>: Insert the flat ribbon cable into the "CAMERA" port on the Raspberry Pi board. Make sure the silver contacts on the ribbon cable face the HDMI ports!</li>
+        </ul>
+    </div>
+
+    <div class="step-card">
+        <h2><span class="step-number">2</span> Connect Pi to Arduino</h2>
+        <p>We need a data bridge between the two brains.</p>
+        <ul style="margin-left: 20px; margin-top: 10px; line-height: 1.8;">
+            <li>Take a standard <strong>Arduino USB Cable</strong> (the one that looks like a printer cable with a square end).</li>
+            <li>Plug the square end into the Arduino Uno.</li>
+            <li>Plug the flat USB-A end into any open USB port on the Raspberry Pi.</li>
+        </ul>
+        <div class="tip">
+            💡 Magic trick: By doing this, you actually kill two birds with one stone! This cable allows the Pi to send Serial Commands to the Arduino, AND it provides the 5V power to keep the Arduino turned on. You don't need any extra power wires for the Arduino!
+        </div>
+    </div>
+
+    <div class="success">
+        ✅ Once this is done, the Brains of your robot are complete!
+    </div>
+
+</body>
+</html>

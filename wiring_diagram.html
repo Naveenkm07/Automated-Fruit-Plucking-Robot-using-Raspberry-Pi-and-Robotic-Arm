@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Full Wiring Guide - 6 Sensors</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #111;
+            color: #fff;
+            padding: 30px;
+        }
+        h1 { color: #ff4757; text-align: center; font-size: 28px; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #aaa; margin-bottom: 30px; }
+
+        .section {
+            background: #1e1e2e;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #ff4757;
+        }
+        .section.green  { border-left-color: #2ecc71; }
+        .section.blue   { border-left-color: #3498db; }
+        .section.orange { border-left-color: #e67e22; }
+        .section.yellow { border-left-color: #f1c40f; }
+        .section.purple { border-left-color: #9b59b6; }
+
+        .section h2 { font-size: 20px; margin-bottom: 15px; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #2f3542; padding: 10px; text-align: left; border-radius: 5px; }
+        td { padding: 10px 12px; border-bottom: 1px solid #2f3542; font-size: 15px; }
+        tr:last-child td { border-bottom: none; }
+        .pin-badge {
+            display: inline-block;
+            background: #ff4757;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .pin-badge.green  { background: #2ecc71; color: #000; }
+        .pin-badge.blue   { background: #3498db; }
+        .pin-badge.orange { background: #e67e22; }
+        .pin-badge.yellow { background: #f1c40f; color: #000; }
+        .pin-badge.purple { background: #9b59b6; }
+        .pin-badge.gray   { background: #7f8c8d; }
+
+        .warning {
+            background: #c0392b;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin: 10px 0;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        .tip {
+            background: #1a5c36;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin: 10px 0;
+            font-size: 15px;
+        }
+
+        .layout-diagram {
+            background: #0d1117;
+            border-radius: 12px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 16px;
+            line-height: 2;
+            text-align: center;
+            margin-bottom: 20px;
+            white-space: pre;
+        }
+        .front { color: #3498db; }
+        .side  { color: #9b59b6; }
+        .ir    { color: #2ecc71; }
+        .back  { color: #e67e22; }
+        .rover-body { color: #aaa; }
+    </style>
+</head>
+<body>
+
+<h1>🤖 Fruit Robot — Complete Wiring Guide (6 Sensors)</h1>
+<p class="subtitle">3 Ultrasonic Sensors (Front, Left, Right) + 3 IR Sensors (Front-Left, Front-Right, Back)</p>
+
+<!-- ROBOT LAYOUT -->
+<div class="layout-diagram">
+           FRONT
+<span class="ir">[IR FL]</span> <span class="front">[US Front]</span> <span class="ir">[IR FR]</span>
+   │         │         │
+ ┌───────────────────────┐
+ │                       │
+<span class="side">[US L]</span> ─┤     ROBOT     ├─ <span class="side">[US R]</span>
+ │                       │
+ └───────────────────────┘
+             │
+         <span class="back">[IR Back]</span>
+</div>
+
+<!-- 3 ULTRASONIC SENSORS -->
+<div class="section blue">
+    <h2>🔵 3x Ultrasonic Sensors (HC-SR04) — Front, Left, Right</h2>
+    <div class="warning">⚠️ EVERY Echo pin gives 5V! Must use a voltage divider (1kΩ + 2kΩ resistors) on ALL 3 Echo wires before connecting to Pi!</div>
+    <table>
+        <tr><th>Sensor</th><th>TRIG Pin (Yellow)</th><th>ECHO Pin (Green - via Resistors!)</th></tr>
+        <tr>
+            <td><strong>Front US</strong></td>
+            <td>GPIO 22 → <span class="pin-badge yellow">Pin 15</span></td>
+            <td>GPIO 23 → <span class="pin-badge blue">Pin 16</span></td>
+        </tr>
+        <tr>
+            <td><strong>Left US</strong></td>
+            <td>GPIO 24 → <span class="pin-badge yellow">Pin 18</span></td>
+            <td>GPIO 25 → <span class="pin-badge orange">Pin 22</span></td>
+        </tr>
+        <tr>
+            <td><strong>Right US</strong></td>
+            <td>GPIO 16 → <span class="pin-badge yellow">Pin 36</span></td>
+            <td>GPIO 26 → <span class="pin-badge purple">Pin 37</span></td>
+        </tr>
+    </table>
+    <p style="margin-top:10px; font-size:14px; color:#aaa;">* Connect all VCC to 5V (Buck Converter) and all GND to Ground (Buck Converter + Pi Pin 6).</p>
+</div>
+
+<!-- 3 IR SENSORS -->
+<div class="section green">
+    <h2>🟢 3x IR Proximity Sensors — Front-Left, Front-Right, Back</h2>
+    <div class="tip">✅ IR OUT pin is 3.3V safe — connects DIRECTLY to Pi, no resistors needed!</div>
+    <table>
+        <tr><th>Sensor</th><th>OUT Pin</th></tr>
+        <tr>
+            <td><strong>Front-Left IR</strong></td>
+            <td>GPIO 17 → <span class="pin-badge green">Pin 11</span></td>
+        </tr>
+        <tr>
+            <td><strong>Front-Right IR</strong></td>
+            <td>GPIO 27 → <span class="pin-badge green">Pin 13</span></td>
+        </tr>
+        <tr>
+            <td><strong>Back IR</strong></td>
+            <td>GPIO 4 → <span class="pin-badge gray">Pin 7</span></td>
+        </tr>
+    </table>
+    <p style="margin-top:10px; font-size:14px; color:#aaa;">* Connect all VCC to 3.3V or 5V and all GND to Pi GND (e.g., Pin 9 or Pin 14).</p>
+</div>
+
+<!-- MOTORS -->
+<div class="section">
+    <h2>🔴 Motor Driver (SmartElex 15S)</h2>
+    <table>
+        <tr><th>SmartElex Pin</th><th>→ Connect To</th><th>Pi Physical Pin</th></tr>
+        <tr><td>Left PWM</td><td>GPIO 12</td><td><span class="pin-badge">Pin 32</span></td></tr>
+        <tr><td>Left DIR</td><td>GPIO 5</td><td><span class="pin-badge">Pin 29</span></td></tr>
+        <tr><td>Right PWM</td><td>GPIO 13</td><td><span class="pin-badge">Pin 33</span></td></tr>
+        <tr><td>Right DIR</td><td>GPIO 6</td><td><span class="pin-badge">Pin 31</span></td></tr>
+        <tr><td>GND</td><td>Pi GND (MUST share ground!)</td><td><span class="pin-badge blue">Pin 39</span></td></tr>
+    </table>
+</div>
+
+<!-- VOLTAGE DIVIDER HOW TO -->
+<div class="section">
+    <h2>🔧 How to Make the Voltage Divider (For ALL 3 Echo Pins)</h2>
+    <p style="margin-bottom:15px; line-height:1.7; color:#ccc;">
+        You need to make this for the Front Echo, Left Echo, AND Right Echo.<br>
+        You need: one <strong>1kΩ resistor</strong> and one <strong>2kΩ resistor</strong> for each of the 3 sensors.
+    </p>
+    <pre style="background:#0d1117; padding:20px; border-radius:8px; font-size:15px; line-height:2;">
+  HC-SR04 ECHO ──┬── 1kΩ resistor ──── Pi GPIO Pin
+                 │
+               2kΩ resistor
+                 │
+               GND</pre>
+</div>
+
+<!-- TEST COMMAND -->
+<div class="section green">
+    <h2>✅ How to Test All 6 Sensors</h2>
+    <p style="color:#ccc; margin-bottom:10px;">After wiring, run this on your Raspberry Pi terminal:</p>
+    <pre style="background:#0d1117; padding:15px; border-radius:8px; font-size:16px;">
+source ~/robot_env/bin/activate
+cd ~/fruit_robot
+python3 sensors/obstacle_sensors.py</pre>
+</div>
+
+</body>
+</html>
