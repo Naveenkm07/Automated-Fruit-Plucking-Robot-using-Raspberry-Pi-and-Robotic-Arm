@@ -1,0 +1,32 @@
+# =============================================================
+# Automated Tomato Plucking Rover — Python Dependencies
+# =============================================================
+# Install on Raspberry Pi:
+#   pip install -r requirements.txt
+#
+# NOTE: Some packages (RPi.GPIO, picamera2) are pre-installed
+#       on Raspberry Pi OS. Install only if missing.
+# =============================================================
+
+# --- GPIO Control ---
+RPi.GPIO>=0.7.1
+gpiozero>=2.0
+
+# --- Serial Communication (Pi ↔ Arduino) ---
+pyserial>=3.5
+
+# --- Computer Vision ---
+opencv-python-headless>=4.8.0
+numpy>=1.24.0
+
+# --- Camera ---
+picamera2>=0.3.12
+
+# --- AI Object Detection ---
+# NOTE: ultralytics (YOLOv8) needs ~1GB disk space
+# Install separately if needed:
+#   pip install ultralytics
+# ultralytics>=8.0.0
+
+# --- Utilities ---
+Pillow>=10.0.0
