@@ -8,10 +8,14 @@ from arm.serial_comm import ArduinoComm
 from vision.camera_test import CameraManager
 from vision.fruit_detector import FruitDetector
 from vision.target_calculator import TargetCalculator
+from sensors.obstacle_sensors import ObstacleSensorArray
 
 class HarvestingRobot:
     def __init__(self, detection_method='hsv'):
-        print('Initializing Harvesting Robot...')
+        print('='*50)
+        print('🍎 Initializing Harvesting Robot...')
+        print('='*50)
+        
         self.rover = RoverController()
         
         self.arm = ArduinoComm()
@@ -24,12 +28,27 @@ class HarvestingRobot:
         self.detector = FruitDetector(method=detection_method)
         self.calculator = TargetCalculator()
         
+        # Initialize the 6 obstacle sensors
+        self.sensors = ObstacleSensorArray()
+        
         self.fruits_picked = 0
 
     def run(self):
-        print('Starting autonomous harvesting loop...')
+        print('\n🚀 Starting autonomous harvesting loop...')
         try:
             while True:
+                # 1. Read obstacle sensors to ensure safety
+                sensor_data = self.sensors.read_all()
+                safe_action = sensor_data['action']
+                
+                # If we are completely blocked, stop and wait
+                if safe_action == 'stop':
+                    print('🚨 BLOCKED ON ALL SIDES! Stopping.')
+                    self.rover.stop()
+                    time.sleep(1)
+                    continue
+
+                # 2. Look for fruits
                 frame = self.camera.capture()
                 if frame is None:
                     continue
@@ -41,35 +60,51 @@ class HarvestingRobot:
                     readiness = self.calculator.get_pick_readiness(best)
                     
                     if readiness['ready']:
-                        print('Fruit ready to pick! Stopping rover.')
+                        print('🎯 Fruit ready to pick! Stopping rover.')
                         self.rover.stop()
                         
-                        print('Picking fruit...')
+                        print('🦾 Picking fruit...')
                         self.arm.pick()
                         time.sleep(5)
                         self.arm.go_home()
                         self.fruits_picked += 1
-                        print(f'Fruits picked: {self.fruits_picked}')
+                        print(f'✅ Fruits picked: {self.fruits_picked}')
                     else:
-                        print('Adjusting position...')
+                        print('🔄 Adjusting position towards fruit...')
                         adj = self.calculator.get_rover_adjustment(best)
-                        if adj['action'] == 'move_left':
-                            self.rover.turn_left(40)
-                        elif adj['action'] == 'move_right':
-                            self.rover.turn_right(40)
-                        elif adj['action'] == 'move_forward':
+                        
+                        # Only move if the obstacle sensors say it is safe!
+                        if adj['action'] == 'move_forward' and sensor_data['front_ok']:
                             self.rover.forward(40)
+                        elif adj['action'] == 'move_left' and sensor_data['left_ok']:
+                            self.rover.turn_left(40)
+                        elif adj['action'] == 'move_right' and sensor_data['right_ok']:
+                            self.rover.turn_right(40)
+                        else:
+                            print('⚠️ Cannot move towards fruit (obstacle in the way!)')
+                            self.rover.stop()
+                            
                         time.sleep(0.5)
                         self.rover.stop()
                 else:
-                    self.rover.spin_right(40)
+                    # No fruit seen, explore the environment using the safe action
+                    print(f'🔍 Exploring... (Safe action: {safe_action})')
+                    if safe_action == 'forward':
+                        self.rover.forward(40)
+                    elif safe_action == 'spin_left':
+                        self.rover.spin_left(40)
+                    elif safe_action == 'spin_right':
+                        self.rover.spin_right(40)
+                    elif safe_action == 'backward':
+                        self.rover.backward(40)
+                        
                     time.sleep(0.5)
                     self.rover.stop()
                     
                 time.sleep(0.1)
                 
         except KeyboardInterrupt:
-            print('Stopping...')
+            print('\n🛑 Stopping Harvesting Robot...')
         finally:
             self.cleanup()
 
@@ -80,6 +115,8 @@ class HarvestingRobot:
             self.arm.disconnect()
         if self.camera:
             self.camera.stop()
+        if hasattr(self, 'sensors'):
+            self.sensors.cleanup()
 
 if __name__ == '__main__':
     method = 'hsv'
